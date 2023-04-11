@@ -1,30 +1,56 @@
-<script setup lang="ts">
-import {computed, ref} from "vue";
+<script lang="ts">
+import { defineComponent, ref, computed } from 'vue';
 
-const number = ref(80);
-const showOrNot = computed(
-  (): boolean => {
-    // 戻り値用の変数を初期値falseで用意
-    let showOrNot = false;
-    // 0から100の乱数を発生
-    const rand = Math.round(Math.random()*100);
-    // 乱数が50以上ならば、戻り値をtrueに変更
-    if(rand >= 50) {
-      showOrNot = true;
-    }
-    return showOrNot;
+export default defineComponent({
+  name: "App",
+  setup() {
+    const cocktailDataListInit = new Map<number, Cocktail>();
+    cocktailDataListInit.set(1, {id: 1, name: "ホワイトレディ", price: 1200});
+    cocktailDataListInit.set(2, {id: 2, name: "ブルーハワイ", price: 1500});
+    cocktailDataListInit.set(3, {id: 3, name: "ニューヨーク", price: 1100});
+    cocktailDataListInit.set(4, {id: 4, name: "マティーニ", price: 1500});
+
+    const cocktailNo = ref(1);
+
+    const priceMsg = computed(
+      (): string => {
+        // カクテル番号に該当するカクテルデータを取得
+        const cocktail = cocktailDataListInit.get(cocktailNo.value);
+        // カクテル番号に該当するデータが無い場合のメッセージを用意
+        let msg = "該当するカクテルはありません。";
+
+        // カクテル番号に該当する情報がある場合
+        if(cocktail != undefined) {
+          // カクテル番号に該当するカクテルの名前と金額を表示する文字列を作成
+          msg = `該当するカクテルは${cocktail.name}で、価格は${cocktail.price}円です。`;
+        }
+        // 表示文字列を返す
+        return msg;
+      }
+    );
+
+    setInterval(
+      (): void => {
+        cocktailNo.value = Math.round(Math.random() * 3) + 1;
+      },
+      3000
+    );
+
+    return {
+      cocktailNo,
+      priceMsg
+    };
   }
-);
+});
+
+interface Cocktail {
+  id: number;
+  name: string;
+  price: number;
+}
 </script>
 
 <template>
-  <p v-if="number >= 50">
-    条件に合致したので表示①
-  </p>
-  <p v-if="Math.round(Math.random() * 100) >= 50">
-    条件に合致したので表示②
-  </p>
-  <p v-if="showOrNot">
-    条件に合致したので表示③
-  </p>
+  <p>現在のカクテル番号：{{ cocktailNo }}</p>
+  <p>{{ priceMsg }}</p>
 </template>
