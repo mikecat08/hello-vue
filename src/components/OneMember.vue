@@ -1,44 +1,52 @@
 <script setup lang="ts">
-import {ref, computed} from "vue";
+import {computed, inject} from "vue";
+import type {Member} from "../interfaces";
 
 // Propsインターフェースの定義
 interface Props {
   id: number;
-  name: string;
-  email: string;
-  points: number;
-  note?: string;
 }
 
 // Propsオブジェクトの設定
-const props = withDefaults(
-  defineProps<Props>(),
-  {note: "--"}
+const props = defineProps<Props>();
+
+// 会員リストをInject
+const memberList = inject("memberList") as Map<number, Member>;
+
+// 該当する会員情報の取得
+const member = computed(
+  (): Member => {
+    return memberList.get(props.id) as Member;
+  }
+)
+
+// Propsであるnoteを加工する算出プロパティ
+const localNote = computed(
+  (): string => {
+    let localNote = member.value.note;
+    if(localNote == undefined) {
+      localNote = "--";
+    }
+    return localNote;
+  }
 );
-
-// このコンポーネント内で利用するポイント数のテンプレート変数
-const localPoints = ref(props.points);
-
-// [ポイント加算]ボタンをクリックし時のメソッド
-const pointUp = (): void => {
-  localPoints.value++;
-}
 </script>
 
 <template>
   <section class="box">
-    <h4>{{ name }}さんの情報</h4>
+    <h4>{{ member.name }}さんの情報</h4>
     <dl>
       <dt>ID</dt>
       <dd>{{ id }}</dd>
       <dt>メールアドレス</dt>
-      <dd>{{ email }}</dd>
+      <dd>{{ member.email }}</dd>
       <dt>保有ポイント</dt>
-      <dd>{{ localPoints }}</dd>
+      <dd>
+        <input type="number" v-model.number="member.points">
+      </dd>
       <dt>備考</dt>
-      <dd>{{ note }}</dd>
+      <dd>{{ localNote }}</dd>
     </dl>
-    <button v-on:click="pointUp">ポイント加算</button>
   </section>
 </template>
 

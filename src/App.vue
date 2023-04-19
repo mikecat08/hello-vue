@@ -1,26 +1,24 @@
 <script setup lang="ts">
-import {ref} from "vue";
-import OneSection from "./components/OneSection.vue";
+import {reactive, provide} from "vue";
+import BaseSection from "./components/BaseSection.vue";
+import type {Member} from "./interfaces";
 
-const randInit = Math.round(Math.random() * 10);
-const rand = ref(randInit);
-const onCreateNewRand = (): void => {
-  rand.value = Math.round(Math.random() * 10);
-}
+// 会員情報リストの用意
+const memberList = new Map<number, Member>();
+memberList.set(33456, {id: 33456, name: "田中太郎", email: "bow@example.com", points: 35, note: "初回入会特典あり"});
+memberList.set(47783, {id: 47783, name: "鈴木次郎", email: "mue@example.com", points: 53});
+
+// 会員情報をProvide
+provide("memberList", reactive(memberList));
 </script>
 
 <template>
-  <section>
-    <p>親コンポーネントで乱数を表示: {{ rand }}</p>
-    <OneSection
-      v-bind:rand="rand"
-      v-on:createNewRand="onCreateNewRand" />
-  </section>
+  <BaseSection />
 </template>
 
-<style>
+<!-- <style>
 section {
   border: blue 1px solid;
   margin: 10px;
 }
-</style>
+</style> -->
