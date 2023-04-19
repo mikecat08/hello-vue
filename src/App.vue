@@ -1,14 +1,20 @@
 <script setup lang="ts">
-import OneInfo from "./components/OneInfo.vue";
+import {ref} from "vue";
+import OneSection from "./components/OneSection.vue";
+
+const randInit = Math.round(Math.random() * 10);
+const rand = ref(randInit);
+const onCreateNewRand = (): void => {
+  rand.value = Math.round(Math.random() * 10);
+}
 </script>
 
 <template>
-  <h1>基礎</h1>
   <section>
-    <h2>属性に直接記述</h2>
-    <OneInfo
-      title="Propsの利用"
-      content="子コンポーネントにデータを渡すにはPropsを利用する。" />
+    <p>親コンポーネントで乱数を表示: {{ rand }}</p>
+    <OneSection
+      v-bind:rand="rand"
+      v-on:createNewRand="onCreateNewRand" />
   </section>
 </template>
 
