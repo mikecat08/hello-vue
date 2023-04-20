@@ -1,19 +1,44 @@
 <script setup lang="ts">
-import {reactive, provide} from "vue";
-import BaseSection from "./components/BaseSection.vue";
-import type {Member} from "./interfaces";
+import {ref} from "vue";
+import Input from "./components/Input.vue";
+import Radio from "./components/Radio.vue";
+import Select from "./components/Select.vue"
 
-// 会員情報リストの用意
-const memberList = new Map<number, Member>();
-memberList.set(33456, {id: 33456, name: "田中太郎", email: "bow@example.com", points: 35, note: "初回入会特典あり"});
-memberList.set(47783, {id: 47783, name: "鈴木次郎", email: "mue@example.com", points: 53});
+// 現在表示させるコンポーネントを表すテンプレート変数
+const currentComp = ref(Input);
 
-// 会員情報をProvide
-provide("memberList", reactive(memberList));
+// 現在表示させるコンポーネント名を表すテンプレート変数
+const currentCompName = ref("Input");
+
+// コンポーネントの配列
+const compList = [Input, Radio, Select];
+const compNameList: string[] = ["Input", "Radio", "Select"];
+
+// 現在表示させているコンポーネントに対応した配列のインデックス番号
+let currentCompIndex = 0;
+
+// コンポーネントを切り替えるメソッド
+const switchComp = (): void => {
+  // インデックス番号をインクリメント
+  currentCompIndex++;
+  // インデックス番号が3以上なら
+  if(currentCompIndex >= 3) {
+    // 0にリセット
+    currentCompIndex = 0;
+  }
+  // インデックス番号に該当するコンポーネントをcurrentCompに代入
+  currentComp.value = compList[currentCompIndex];
+  // インデックス番号に該当するコンポーネント名をcurrentCompNameに代入
+  currentCompName.value = compNameList[currentCompIndex];
+}
 </script>
 
 <template>
-  <BaseSection />
+  <p>コンポーネント名: {{ currentCompName }}</p>
+  <KeepAlive>
+    <component v-bind:is="currentComp" />
+  </KeepAlive>
+  <button v-on:click="switchComp">切り替え</button>
 </template>
 
 <!-- <style>

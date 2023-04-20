@@ -1,30 +1,24 @@
 <script setup lang="ts">
-interface Props {
-  rand: number
-}
+import {reactive} from "vue";
 
-interface Emits {
-  (event: "createNewRand"): void;
-}
-
-defineProps<Props>();
-const emit = defineEmits<Emits>();
-
-const onNewRandButtonClick = (): void => {
-  emit("createNewRand");
-}
+const memberInfo = reactive({
+  name: "田中太郎",
+  state: "問題ありません。"
+});
 </script>
 
 <template>
   <section class="box">
-    <p>子コンポーネントで乱数を表示: {{ rand }}</p>
-    <button v-on:click="onNewRandButtonClick">新たな乱数を発生</button>
+    <slot v-bind:memberInfo="memberInfo">
+      <h1>{{ memberInfo.name }}さんの状況</h1>
+      <p>{{ memberInfo.state }}</p>
+    </slot>
   </section>
 </template>
 
 <style>
 .box {
-  border: green 1px dashed;
+  border: green 1px solid;
   margin: 10px;
 }
 </style>
